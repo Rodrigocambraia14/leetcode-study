@@ -1,4 +1,16 @@
-﻿public static class Solution
+﻿using System.Diagnostics;
+
+Stopwatch stopWatch = new();
+
+stopWatch.Start();
+
+var result = Solution.RomanToInt("MCMXCIV");
+
+stopWatch.Stop();
+
+Console.WriteLine(stopWatch.Elapsed);
+
+public static class Solution
 {
     //    Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
     //You may assume that each input would have exactly one solution, and you may not use the same element twice.
@@ -58,35 +70,32 @@
     //Given a roman numeral, convert it to an integer.
     public static int RomanToInt(string s)
     {
-        Dictionary<string, int> dict = new()
-        {
-            { "I", 1 },
-            { "V", 5 },
-            { "X", 10 },
-            { "L", 50 },
-            { "C", 100 },
-            { "D", 500 },
-            { "M", 1000 }
-        };
-
         int sum = 0;
-        int previousValue = 0;
+        int prev = 0;
 
-        for (int i = 0; i < s.Length; i++)
+        for (int i = s.Length - 1; i >= 0; i--)
         {
-            char currentRoman = s[i];
-
-            dict.TryGetValue(currentRoman.ToString(), out int currentValue);
-
-            if (i != 0)
+            int val =  s[i] switch
             {
-                dict.TryGetValue(s[i - 1].ToString(), out previousValue);
+                'I' => 1,
+                'V' => 5,
+                'X' => 10,
+                'L' => 50,
+                'C' => 100,
+                'D' => 500,
+                'M' => 1000,
+                _ => 0,
+            };;
+
+            if (val < prev)
+            {
+                sum -= val;
+                prev = val;
+                continue;
             }
 
-            if (previousValue < currentValue)
-                sum += (currentValue - previousValue) - previousValue;
-            else
-                sum += currentValue;
+            sum += val;
+            prev = val;
         }
 
         return sum;

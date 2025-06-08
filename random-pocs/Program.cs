@@ -193,14 +193,21 @@ public static class Solution
 
         var stringNum = x.ToString();
 
+        var halfDivider = (stringNum.Length / 2);
+
+        var subtractFactor = stringNum.Length % 2 != 0 ? 0 : 1;
+
         StringBuilder sb = new();
 
-        for (int i = stringNum.Length - 1; i >= 0; i--)
+        for (int i = stringNum.Length - 1; i > halfDivider - subtractFactor; i--)
         {
             sb.Append(stringNum[i]); 
         }
 
-        if (stringNum == sb.ToString())
+        var firstHalf = stringNum[..(halfDivider)];
+        var lastHalf = sb.ToString();
+
+        if (firstHalf == lastHalf)
             return true;
 
         return false;

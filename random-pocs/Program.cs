@@ -1,14 +1,19 @@
-﻿using System.Diagnostics;
+﻿using Microsoft.VisualBasic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Text;
 
 Stopwatch stopWatch = new();
 
 stopWatch.Start();
 
-var result = Solution.RomanToInt("MCMXCIV");
+var result = Solution.LongestCommonPrefix(["flower", "flow", "flight"]);
 
 stopWatch.Stop();
 
 Console.WriteLine(stopWatch.Elapsed);
+
+Console.WriteLine(result);
 
 public static class Solution
 {
@@ -75,7 +80,7 @@ public static class Solution
 
         for (int i = s.Length - 1; i >= 0; i--)
         {
-            int val =  s[i] switch
+            int val = s[i] switch
             {
                 'I' => 1,
                 'V' => 5,
@@ -85,7 +90,7 @@ public static class Solution
                 'D' => 500,
                 'M' => 1000,
                 _ => 0,
-            };;
+            }; ;
 
             if (val < prev)
             {
@@ -93,12 +98,84 @@ public static class Solution
                 prev = val;
                 continue;
             }
-
             sum += val;
             prev = val;
         }
-
         return sum;
+    }
+    //    Write a function to find the longest common prefix string amongst an array of strings.
+
+    //If there is no common prefix, return an empty string "".
+
+
+
+
+    //Example 1:
+
+    //Input: strs = ["flower", "flow", "flight"]
+    //Output: "fl"
+    //Example 2:
+
+    //Input: strs = ["dog", "racecar", "car"]
+    //Output: ""
+    //Explanation: There is no common prefix among the input strings.
+
+
+    //Constraints:
+
+    //1 <= strs.length <= 200
+    //0 <= strs[i].length <= 200
+    //strs[i] consists of only lowercase English letters if it is non-empty.
+
+    public static string LongestCommonPrefix(string[] strs)
+    {
+        var smallestStringLength = int.MaxValue;
+
+        //for each word
+        for (int i = 0; i < strs.Length; i++)
+        {
+            var currentWord = strs[i];
+
+            if (currentWord.Length < smallestStringLength)
+                smallestStringLength = currentWord.Length;
+
+        }
+
+        var concatenatedPrefix = string.Empty;
+        StringBuilder sb = new StringBuilder();
+
+        //again iterating over each word
+        for (int j = 0; j < smallestStringLength; j++)
+        {
+
+            char? prefixLetter = null;
+            char? previousLetter = null;
+            char? currentLetter = null;
+
+            //iterate over the smallest string length
+            for (int i = 0; i < strs.Length; i++)
+            {
+                if (currentLetter is not null)
+                    previousLetter = currentLetter;
+
+                currentLetter = strs[i][j];
+
+                if (previousLetter is null || currentLetter == previousLetter)
+                    prefixLetter = currentLetter;
+                else
+                {
+                    prefixLetter = null;
+                    break;
+                }
+            }
+
+            if (prefixLetter is not null)
+                sb.Append(prefixLetter);
+            else
+                break;
+        }
+
+        return sb.ToString();
     }
 }
 

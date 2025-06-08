@@ -129,53 +129,27 @@ public static class Solution
 
     public static string LongestCommonPrefix(string[] strs)
     {
-        var smallestStringLength = int.MaxValue;
+        if (strs.Length == 1)
+            return strs[0];
 
-        //for each word
-        for (int i = 0; i < strs.Length; i++)
+        //again iterating over each letter from the first word
+        for (int j = 0; j < strs[0].Length; j++)
         {
-            var currentWord = strs[i];
-
-            if (currentWord.Length < smallestStringLength)
-                smallestStringLength = currentWord.Length;
-
-        }
-
-        var concatenatedPrefix = string.Empty;
-        StringBuilder sb = new StringBuilder();
-
-        //again iterating over each word
-        for (int j = 0; j < smallestStringLength; j++)
-        {
-
-            char? prefixLetter = null;
-            char? previousLetter = null;
-            char? currentLetter = null;
-
-            //iterate over the smallest string length
+            //iterate over the string array
             for (int i = 0; i < strs.Length; i++)
             {
-                if (currentLetter is not null)
-                    previousLetter = currentLetter;
+                if (strs[i].Length == 0)
+                    return string.Empty;
 
-                currentLetter = strs[i][j];
+                if (strs[i].Length <= j)
+                    return strs[0][..j];
 
-                if (previousLetter is null || currentLetter == previousLetter)
-                    prefixLetter = currentLetter;
-                else
-                {
-                    prefixLetter = null;
-                    break;
-                }
+                if (strs[0][j] != strs[i][j])
+                    return strs[0][..j];
             }
-
-            if (prefixLetter is not null)
-                sb.Append(prefixLetter);
-            else
-                break;
         }
 
-        return sb.ToString();
+        return strs[0];
     }
 }
 

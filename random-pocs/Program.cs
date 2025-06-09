@@ -8,7 +8,7 @@ Stopwatch stopWatch = new();
 
 stopWatch.Start();
 
-var result = Solution.IsValid("(([]){})");
+var result = Solution.IsValid("((");
 
 stopWatch.Stop();
 
@@ -202,7 +202,7 @@ public static class Solution
 
         for (int i = stringNum.Length - 1; i > halfDivider - subtractFactor; i--)
         {
-            sb.Append(stringNum[i]); 
+            sb.Append(stringNum[i]);
         }
 
         var firstHalf = stringNum[..(halfDivider)];
@@ -263,59 +263,39 @@ public static class Solution
             return false;
 
 
-        Dictionary<char, char> openingDict = new()
+        Dictionary<char, char> pairs = new()
         {
-            {'(', ')' },
-            {'[', ']' },
-            {'{', '}' },
-           
+            { ')', '(' },
+            { ']', '[' },
+            { '}', '{' }
         };
 
-        Dictionary<char, char> closingDict = new()
-        {
-             {')', '(' },
-             {']', '[' },
-             {'}', '{' }
-
-        };
-
-        // valid strings cannot start with a closing char
-        if (closingDict.TryGetValue(s[0], out _))
-            return false;
-
-        //valid strings cannot end with an opening char
-        if (openingDict.TryGetValue(s[^1], out _))
-            return false;
+        Stack<char> stack = new();
 
         for (int i = 0; i < s.Length; i++)
         {
+            var currentChar = s[i];
 
-            //the last one should be already validated
-            if (i == s.Length - 1)
-                continue;
-
-            var reverseIndex = (s.Length - 1) - i;
-
-            //is openingChar
-            if (openingDict.TryGetValue(s[i], out char equivalentChar))
+            //check if it's an open character
+            if (pairs.ContainsValue(currentChar))
             {
-                if (s[i + 1] != equivalentChar && s[reverseIndex] != equivalentChar)
-                    return false;
-
-                continue;
+                stack.Push(currentChar);
             }
-            else //is closing char
+            //check if it's a closing character
+            else if (pairs.TryGetValue(currentChar, out char open))
             {
-                equivalentChar = closingDict[s[i]];
-
-                if (s[i - 1] != equivalentChar && (s[reverseIndex] != equivalentChar || reverseIndex > i))
+                //if it's a closing character and the stack does not contain the previous opening, it's invalid
+                if (stack.Count == 0 || stack.Pop() != open)
                     return false;
-
-                continue;
             }
+            else
+                return false;
         }
 
-        return true;
+        if (stack.Count == 0)
+            return true;
+        else
+            return false;
     }
 }
 

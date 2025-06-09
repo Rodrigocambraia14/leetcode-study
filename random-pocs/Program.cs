@@ -262,13 +262,27 @@ public static class Solution
         if (s.Length % 2 != 0)
             return false;
 
-
-        Dictionary<char, char> pairs = new()
+        char? getOpeningEquivalentChar(char v)
         {
-            { ')', '(' },
-            { ']', '[' },
-            { '}', '{' }
-        };
+            return v switch
+            {
+                ')' => '(',
+                ']' => '[',
+                '}' => '{',
+                _ => null,
+            };
+        }
+
+        char? getClosingEquivalentChar(char v)
+        {
+            return v switch
+            {
+                '(' => ')',
+                '[' => ']',
+                '{' => '}',
+                _ => null,
+            };
+        }
 
         Stack<char> stack = new();
 
@@ -277,21 +291,24 @@ public static class Solution
             var currentChar = s[i];
 
             //check if it's an open character
-            if (pairs.ContainsValue(currentChar))
+            if (getClosingEquivalentChar(currentChar) is not null)
             {
                 stack.Push(currentChar);
             }
             //check if it's a closing character
-            else if (pairs.TryGetValue(currentChar, out char open))
+            else
             {
-                //if it's a closing character and the stack does not contain the previous opening, it's invalid
+                var open = getOpeningEquivalentChar(currentChar);
+
+                if (open is null)
+                    return false;
+
                 if (stack.Count == 0 || stack.Pop() != open)
                     return false;
             }
-            else
-                return false;
         }
 
+        //if every closing character has it previous opening, it' ok
         if (stack.Count == 0)
             return true;
         else

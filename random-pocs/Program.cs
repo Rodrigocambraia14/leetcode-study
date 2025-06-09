@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualBasic;
 using System.ComponentModel;
+using System.Data;
 using System.Diagnostics;
 using System.Text;
 
@@ -7,7 +8,7 @@ Stopwatch stopWatch = new();
 
 stopWatch.Start();
 
-var result = Solution.IsPalindrome(121);
+var result = Solution.IsValid("(([]){})");
 
 stopWatch.Stop();
 
@@ -211,6 +212,110 @@ public static class Solution
             return true;
 
         return false;
+    }
+
+    //    Given a string s containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.
+
+    //An input string is valid if:
+
+    //Open brackets must be closed by the same type of brackets.
+    //Open brackets must be closed in the correct order.
+    //Every close bracket has a corresponding open bracket of the same type.
+
+
+    //Example 1:
+
+    //Input: s = "()"
+
+    //Output: true
+
+    //Example 2:
+
+    //Input: s = "()[]{}"
+
+    //Output: true
+
+    //Example 3:
+
+    //Input: s = "(]"
+
+    //Output: false
+
+    //Example 4:
+
+    //Input: s = "([])"
+
+    //Output: true
+
+
+
+
+    //Constraints:
+
+    //1 <= s.length <= 104
+    //s consists of parentheses only '()[]{}'.
+
+
+    public static bool IsValid(string s)
+    {
+        //odd strings cannot be valid (like "([)")
+        if (s.Length % 2 != 0)
+            return false;
+
+
+        Dictionary<char, char> openingDict = new()
+        {
+            {'(', ')' },
+            {'[', ']' },
+            {'{', '}' },
+           
+        };
+
+        Dictionary<char, char> closingDict = new()
+        {
+             {')', '(' },
+             {']', '[' },
+             {'}', '{' }
+
+        };
+
+        // valid strings cannot start with a closing char
+        if (closingDict.TryGetValue(s[0], out _))
+            return false;
+
+        //valid strings cannot end with an opening char
+        if (openingDict.TryGetValue(s[^1], out _))
+            return false;
+
+        for (int i = 0; i < s.Length; i++)
+        {
+
+            //the last one should be already validated
+            if (i == s.Length - 1)
+                continue;
+
+            var reverseIndex = (s.Length - 1) - i;
+
+            //is openingChar
+            if (openingDict.TryGetValue(s[i], out char equivalentChar))
+            {
+                if (s[i + 1] != equivalentChar && s[reverseIndex] != equivalentChar)
+                    return false;
+
+                continue;
+            }
+            else //is closing char
+            {
+                equivalentChar = closingDict[s[i]];
+
+                if (s[i - 1] != equivalentChar && (s[reverseIndex] != equivalentChar || reverseIndex > i))
+                    return false;
+
+                continue;
+            }
+        }
+
+        return true;
     }
 }
 
